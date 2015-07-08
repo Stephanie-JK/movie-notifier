@@ -24,16 +24,18 @@ class UserController extends Controller
      */
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(),[
-            'gcm_id' => 'required|unique:users', 'email' => 'email'
+        $validator = Validator::make($request->all(), [
+            'gcm_id' => 'required|unique:users',
+            'email'  => 'email'
         ]);
 
-        if($validator->fails()){
-            return ['errors' => $validator->errors()->all()];
+        if ($validator->fails()) {
+            return [ 'errors' => $validator->errors()->all(), 'status' => 'failed'];
         }
 
         $user = User::create($request->all());
-        return ['status' => 'pass'];
+
+        return [ 'status' => 'pass' ];
     }
 
 }

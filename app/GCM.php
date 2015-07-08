@@ -52,12 +52,12 @@ class GCM
     /**
      * Send the message to the device
      *
-     * @param      $message The message to send
-     * @param bool $data    Array of data to accompany the message
+     * @param       $message
+     * @param array $data Array of data to accompany the message
      *
      * @return mixed
      */
-    public function send($message, $data = [])
+    public function send($message, $data = [ ])
     {
 
         if ( ! is_array($this->devices) || count($this->devices) == 0) {

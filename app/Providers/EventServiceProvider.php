@@ -13,8 +13,11 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'App\Events\SomeEvent' => [
-            'App\Listeners\EventListener',
+        'App\Events\ShowTimesWereRetrieved' => [
+            'App\Listeners\SendPushNotificationAboutShowtime',
+        ],
+        'App\Events\UpcomingShowsWereRetrieved' => [
+            'App\Listeners\SendPushNotificationToUpdateTheDatabase',
         ],
     ];
 
