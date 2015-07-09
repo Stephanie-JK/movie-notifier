@@ -30,6 +30,6 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('movie:released')->everyMinute();
-        $schedule->command('movie:upcoming')->everyDay();
+        $schedule->command('movie:upcoming')->daily();
     }
 }
