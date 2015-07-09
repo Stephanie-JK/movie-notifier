@@ -33,7 +33,7 @@ class SendPushNotificationAboutShowtime
             if ($notification->hasShowTime()) {
                 $deviceToken = $notification->user->gcm_id;
 
-                $message    = $notification->movie->name . ' tickets for Friday now available at QFX Civil :)';
+                $message    = $notification->movie->name . ' tickets for '.$notification->date->format("l, dS M").' now available at '.$notification->movie->cinema->name;
                 $title      = $notification->movie->cinema->name;
                 $url        = $notification->movie->cinema->url;
                 $icon_image = $notification->movie->image;
