@@ -8,12 +8,15 @@ get('/', function(){
 $router->group(['prefix' => 'api'], function () use ($router) {
 
     $router->group(['prefix' => 'users'], function () {
-        get('create','UserController@create');
+        post('create','UserController@create');
+    });
+
+    $router->group(['prefix' => 'cinemas'], function () {
+        post('all','CinemaController@all');
     });
 
     $router->group(['prefix' => 'notifications'], function () {
-        get('create','NotificationController@create');
-        post('store','NotificationController@store');
+        post('create','NotificationController@create');
     });
     //resource('users', 'UserController');
 });

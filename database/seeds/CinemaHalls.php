@@ -5,6 +5,7 @@ use Illuminate\Database\Seeder;
 
 class CinemaHalls extends Seeder
 {
+
     /**
      * Run the database seeds.
      *
@@ -13,9 +14,17 @@ class CinemaHalls extends Seeder
     public function run()
     {
         CinemaHall::create([
-           'name' => 'QFX',
+            'id'   => 1,
+            'name' => 'QFX Cinemas',
             'logo' => 'http://nikhil.com.np/images/qfx.png',
-            'url' => 'http://qfxcinemas.com',
+            'url'  => 'http://qfxcinemas.com',
+        ]);
+
+        CinemaHall::create([
+            'id'   => 2,
+            'name' => 'FCube Cinemas',
+            'logo' => 'http://nikhil.com.np/images/fcube.png',
+            'url'  => 'http://www.fcubecinemas.com',
         ]);
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CinemaHall extends Model
 {
 
-    protected $fillable = [ 'name', 'logo' ];
+    protected $fillable = [ 'name', 'logo', 'url' ];
 
 
     public function movies()

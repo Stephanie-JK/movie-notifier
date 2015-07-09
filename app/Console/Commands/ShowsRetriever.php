@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Crawler\FCube\FCubeProvider;
 use App\Crawler\QFX\QFXProvider;
 use App\Events\ShowTimesWereRetrieved;
 use GuzzleHttp\Client;
@@ -19,7 +20,8 @@ class ShowsRetriever extends Command implements SelfHandling
     protected $signature = 'movie:released';
 
     protected $providers = [
-        QFXProvider::class
+        QFXProvider::class,
+        FCubeProvider::class,
     ];
 
     /**
@@ -53,16 +55,15 @@ class ShowsRetriever extends Command implements SelfHandling
      */
     public function handle()
     {
-        //foreach ($this->providers as $provider) {
-        //    $provider = new $provider;
-        //
-        //    $movies = $provider->released();
-        //    foreach ($movies as $movie) {
-        //        $provider->model()->movies()->firstOrCreate(array_except($movie,
-        //                [ 'showtime' ]))->showtimes()->firstOrCreate($movie['showtime']);
-        //    }
-        //}
+        foreach ($this->providers as $provider) {
+            $provider = new $provider;
 
+            $movies = $provider->released();
+            foreach ($movies as $movie) {
+                $provider->model()->movies()->firstOrCreate(array_except($movie,
+                    [ 'showtime' ]))->showtimes()->firstOrCreate($movie['showtime']);
+            }
+        }
         event(new ShowTimesWereRetrieved());
     }
 }

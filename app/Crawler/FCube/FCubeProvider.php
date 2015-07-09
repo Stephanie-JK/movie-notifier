@@ -1,13 +1,13 @@
-<?php namespace App\Crawler\QFX;
+<?php namespace App\Crawler\FCube;
 
 use App\CinemaHall;
 use App\Crawler\BaseProvider;
 use Carbon\Carbon;
 
-class QFXProvider extends BaseProvider
+class FCubeProvider extends BaseProvider
 {
 
-    protected $domain = "http://www.qfxcinemas.com";
+    protected $domain = "http://www.fcubecinemas.com";
 
 
     /**
@@ -17,7 +17,7 @@ class QFXProvider extends BaseProvider
      */
     public function model()
     {
-        return CinemaHall::find(1);
+        return CinemaHall::find(2);
     }
 
 
@@ -44,7 +44,7 @@ class QFXProvider extends BaseProvider
      */
     private function showtimes()
     {
-        $response = $this->client->get("{$this->domain}/Home/GetShowDatesForTheatre?TheatreID=0");
+        $response = $this->client->get("{$this->domain}/Home/CurrentShowDate");
         if ($response->getStatusCode() == 200) {
             $data = json_decode($response->getBody(), true);
 
@@ -65,13 +65,12 @@ class QFXProvider extends BaseProvider
     private function moviesOn($showtime)
     {
         $movies = [ ];
-        $url    = "{$this->domain}/Home/NowShowingList?TheatreID=0&SelectedDate=" . urlencode($showtime) . "&ScreenType=0";
+        $url    = "{$this->domain}/Home/ShowList?id=-1&d=" . urlencode($showtime) . "&s=-2";
 
         $response = $this->client->get($url);
         if ($response->getStatusCode() == 200) {
             $dom = $this->dom->load($response->getBody());
-
-            foreach ($dom->find('li[!class]') as $element) {
+            foreach ($dom->find('li') as $element) {
                 $movies[] = [
                     'name'     => $this->sanitize($element->find('a', 0)->plaintext),
                     'image'    => $this->domain . $element->find('img', 0)->src,

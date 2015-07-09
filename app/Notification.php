@@ -9,10 +9,18 @@ class Notification extends Model
 
     protected $fillable = [ 'user_id', 'movie_id', 'date', 'sent' ];
 
+    protected $dates = [ 'date' ];
+
 
     public function scopeSent($query)
     {
         return $query->where('sent', '=', true);
+    }
+
+
+    public function scopeRecent($query)
+    {
+        return $query->orderBy('id', 'DESC');
     }
 
 
@@ -36,6 +44,6 @@ class Notification extends Model
 
     public function hasShowTime()
     {
-        return $this->movie->showtimes()->where('date', '=', $this->date)->count() ? true : false;
+        return $this->movie->showtimes()->where('date', '=', $this->date->format('Y-m-d'))->count() ? true : false;
     }
 }
