@@ -38,4 +38,20 @@ class NotificationController extends Controller
 
         return [ 'status' => 'success' ];
     }
+
+    public function destroy(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'gcm_id'   => 'required|exists:users,gcm_id',
+            'notification_id' => 'required|exists:notifications,id'
+        ]);
+
+        if ($validator->fails()) {
+            return [ 'errors' => $validator->errors()->all(), 'status' => 'failed' ];
+        }
+
+        User::whereGcmId($request->get('gcm_id'))->first()->notifications()->findOrFail($request->get("notification_id"))->delete();
+
+        return [ 'status' => 'success' ];
+    }
 }
