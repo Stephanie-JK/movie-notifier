@@ -60,8 +60,13 @@ class ShowsRetriever extends Command implements SelfHandling
 
             $movies = $provider->released();
             foreach ($movies as $movie) {
-                $provider->model()->movies()->firstOrCreate(array_except($movie,
-                    [ 'showtime' ]))->showtimes()->firstOrCreate($movie['showtime']);
+                $movie = $provider->model()->movies()->whereName($movie['name']);
+                if ($movie->count()) {
+                    $movie = $movie->first();
+                } else {
+                    $movie = $provider->model()->movies()->firstOrCreate(array_except($movie, [ 'showtime' ]));
+                }
+                $movie->showtimes()->firstOrCreate($movie['showtime']);
             }
         }
         event(new ShowTimesWereRetrieved());

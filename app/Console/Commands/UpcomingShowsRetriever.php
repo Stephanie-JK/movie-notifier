@@ -58,7 +58,10 @@ class UpcomingShowsRetriever extends Command implements SelfHandling
 
             $movies = $provider->upcoming();
             foreach ($movies as $movie) {
-                $provider->model()->movies()->firstOrCreate($movie);
+                $movie = $provider->model()->movies()->whereName($movie['name']);
+                if (!$movie->count()) {
+                    $provider->model()->movies()->create($movie);
+                }
             }
         }
         event(new UpcomingShowsWereRetrieved());

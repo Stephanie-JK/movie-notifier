@@ -52,7 +52,7 @@ class CinemaController extends Controller
         }
 
         $rem = [];
-        $reminders = User::whereGcmId($request->get('gcm_id'))->firstOrFail()->notifications()->with(['movie','movie.cinema'])->recent()->get();
+        $reminders = User::whereGcmId($request->get('gcm_id'))->firstOrFail()->notifications()->with(['movie','movie.cinema'])->unsent()->recent()->get();
         foreach($reminders as $reminder)
         {
             $rem[] = [
