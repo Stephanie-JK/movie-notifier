@@ -62,7 +62,7 @@ class ShowsRetriever extends Command implements SelfHandling
             foreach ($movies as $movie) {
                 $movieModel = $provider->model()->movies()->whereName($movie['name']);
                 if ($movieModel->count()) {
-                    $movieModel = $movie->first();
+                    $movieModel = $movieModel->first();
                 } else {
                     $movieModel = $provider->model()->movies()->firstOrCreate(array_except($movie, [ 'showtime' ]));
                 }
