@@ -61,6 +61,8 @@ class UpcomingShowsRetriever extends Command implements SelfHandling
                 $movieModel = $provider->model()->movies()->whereName($movie['name']);
                 if (!$movieModel->count()) {
                     $provider->model()->movies()->create($movie);
+                }else{
+                    $movieModel->first()->update($movie);
                 }
             }
         }
