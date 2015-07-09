@@ -29,8 +29,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('inspire')->hourly();
-
-        $schedule->command('qfx:dates')->everyMinute();
+        $schedule->command('movie:released')->everyMinute();
+        $schedule->command('movie:upcoming')->everyDay();
     }
 }
