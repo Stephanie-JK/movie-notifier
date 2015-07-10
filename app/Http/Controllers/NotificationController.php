@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Movie;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -30,11 +31,17 @@ class NotificationController extends Controller
             return [ 'errors' => $validator->errors()->all(), 'status' => 'failed' ];
         }
 
-        User::whereGcmId($request->get('gcm_id'))->first()->notifications()->firstOrCreate([
-            'movie_id' => $request->get('movie_id'),
-            'date'     => $request->get('date')." 00:00:00",
-            'sent'     => false,
-        ]);
+        $user = User::whereGcmId($request->get('gcm_id'))->firstOrFail();
+        $movie = Movie::find($request->get("movie_id"));
+        $date = $request->get('date');
+
+        if(!$movie->showtimes()->whereDate($date)->count()){
+            $user->notifications()->firstOrCreate([
+                'movie_id' => $movie->id,
+                'date'     => Carbon::createFromFormat("Y-m-d", $date),
+                'sent'     => false,
+            ]);
+        }
 
         return [ 'status' => 'success' ];
     }
