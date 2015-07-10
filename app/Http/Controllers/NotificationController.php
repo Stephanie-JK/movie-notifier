@@ -33,9 +33,9 @@ class NotificationController extends Controller
 
         $user = User::whereGcmId($request->get('gcm_id'))->firstOrFail();
         $movie = Movie::find($request->get("movie_id"));
-        $date = $request->get('date');
+        $date = Carbon::createFromFormat("Y-m-d", $request->get('date'))->toDateString();
 
-        if(!$movie->showtimes()->whereDate($date)->count()){
+        if(!$movie->showtimes()->where('date',$date)->count()){
             $user->notifications()->firstOrCreate([
                 'movie_id' => $movie->id,
                 'date'     => Carbon::createFromFormat("Y-m-d", $date)->toDateTimeString(),
