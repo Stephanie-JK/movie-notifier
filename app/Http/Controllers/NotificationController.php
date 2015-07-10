@@ -38,7 +38,7 @@ class NotificationController extends Controller
         if(!$movie->showtimes()->whereDate($date)->count()){
             $user->notifications()->firstOrCreate([
                 'movie_id' => $movie->id,
-                'date'     => Carbon::createFromFormat("Y-m-d", $date),
+                'date'     => Carbon::createFromFormat("Y-m-d", $date)->toDateTimeString(),
                 'sent'     => false,
             ]);
         }
