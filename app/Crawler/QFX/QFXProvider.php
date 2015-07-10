@@ -94,6 +94,7 @@ class QFXProvider extends BaseProvider
      */
     public function upcoming()
     {
+        $movies = [];
         $url = "{$this->domain}/NextChange";
 
         $response = $this->client->get($url);
