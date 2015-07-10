@@ -30,7 +30,7 @@ class NotificationController extends Controller
             return [ 'errors' => $validator->errors()->all(), 'status' => 'failed' ];
         }
 
-        User::whereGcmId($request->get('gcm_id'))->first()->notifications()->create([
+        User::whereGcmId($request->get('gcm_id'))->first()->notifications()->firstOrCreate([
             'movie_id' => $request->get('movie_id'),
             'date'     => $request->get('date')." 00:00:00",
             'sent'     => false,
