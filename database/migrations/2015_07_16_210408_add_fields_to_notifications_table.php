@@ -14,8 +14,8 @@ class AddFieldsToNotificationsTable extends Migration
     {
         Schema::table('notifications', function(Blueprint $table) {
             $table->integer('no_of_seats')->default(0);
-            $table->string('after_time');
-            $table->string('before_time');
+            $table->string('after_time')->nullable();
+            $table->string('before_time')->nullable();
         });
     }
 

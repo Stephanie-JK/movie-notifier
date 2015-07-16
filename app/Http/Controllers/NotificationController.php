@@ -25,7 +25,9 @@ class NotificationController extends Controller
             'gcm_id'   => 'required|exists:users,gcm_id',
             'movie_id' => 'required|exists:movies,id',
             'date'     => 'required|date|after:today',
-            'no_of_seats' => 'number',
+            'no_of_seats' => 'required_with_all:after_time,before_time|integer',
+            'after_time' => 'required_with_all:no_of_seats,before_time|date_format:g\:i A',
+            'before_time' => 'required_with_all:no_of_seats,after_time|date_format:g\:i A',
         ]);
 
         if ($validator->fails()) {
@@ -41,7 +43,7 @@ class NotificationController extends Controller
                 'movie_id' => $movie->id,
                 'date'     => Carbon::createFromFormat("Y-m-d", $date)->toDateTimeString(),
                 'sent'     => false,
-                'no_of_seats' => $request->get('no_of_seats'),
+                'no_of_seats' => $request->get('no_of_seats', 0),
                 'after_time' => $request->get('after_time'),
                 'before_time' => $request->get('before_time'),
             ]);
