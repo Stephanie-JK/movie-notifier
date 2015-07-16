@@ -4,13 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Notification extends Model
 {
 
     use SoftDeletes;
 
-    protected $fillable = [ 'user_id', 'movie_id', 'date', 'sent' ];
+    protected $guarded = [ ];
 
     protected $dates = [ 'date' ];
 
@@ -33,6 +34,12 @@ class Notification extends Model
     }
 
 
+    public function scopeToReserve($query)
+    {
+        return $query->where('no_of_seats','>',0);
+    }
+
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -48,5 +55,30 @@ class Notification extends Model
     public function hasShowTime()
     {
         return $this->movie->showtimes()->where('date', '=', $this->date->format('Y-m-d'))->count() ? true : false;
+    }
+
+
+    public function requiresReservation()
+    {
+        return $this->reservations()->count() != $this->showtime()->timeslots()->count();
+    }
+
+
+    public function reservations()
+    {
+        return $this->belongsToMany(TimeSlot::class, 'notification_timeslot', 'notification_id', 'timeslot_id');
+    }
+
+
+    public function showtime()
+    {
+        return $this->movie->showtimes()->where('date', '=', $this->date->format('Y-m-d'))->first();
+    }
+
+
+    public function pendingTimeSlots()
+    {
+        $ids = DB::table('notification_timeslot')->where('notification_id', $this->id)->lists('timeslot_id');
+        return $this->showtime()->timeslots()->whereNotIn('id', $ids)->get();
     }
 }

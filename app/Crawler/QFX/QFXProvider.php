@@ -77,13 +77,38 @@ class QFXProvider extends BaseProvider
                     'image'    => $this->domain . $element->find('img', 0)->src,
                     //'release_date' => Carbon::parse("- 7 days")->format("Y-m-d"),
                     'showtime' => [
-                        'date' => Carbon::createFromFormat("m/d/Y", $showtime)->format("Y-m-d")
+                        'date'      => Carbon::createFromFormat("m/d/Y", $showtime)->format("Y-m-d"),
+                        'timeslots' => $this->parseTimeSlots($element->find('div.alphaDetail', 0))
                     ],
                 ];
             }
         }
 
         return $movies;
+    }
+
+
+    private function parseTimeSlots($div)
+    {
+        $locations = [ ];
+        $slots     = [ ];
+
+        foreach ($div->find('span.hallName') as $location) {
+            $locations[] = $location->plaintext;
+        }
+
+        foreach ($div->find('span.time') as $k => $times) {
+            foreach ($times->find('a') as $slot) {
+                parse_str(parse_url($slot->href)['query'], $query);
+                $slots[] = [
+                    'time'     => $slot->plaintext,
+                    'showId'   => $query['ShowID'],
+                    'location' => trim($locations[$k]),
+                ];
+            }
+        }
+
+        return $slots;
     }
 
 
@@ -94,8 +119,8 @@ class QFXProvider extends BaseProvider
      */
     public function upcoming()
     {
-        $movies = [];
-        $url = "{$this->domain}/NextChange";
+        $movies = [ ];
+        $url    = "{$this->domain}/NextChange";
 
         $response = $this->client->get($url);
         if ($response->getStatusCode() == 200) {

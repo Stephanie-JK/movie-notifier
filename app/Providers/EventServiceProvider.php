@@ -15,6 +15,7 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         'App\Events\ShowTimesWereRetrieved' => [
             'App\Listeners\SendPushNotificationAboutShowtime',
+            'App\Listeners\ReserveMovieSeats',
         ],
         'App\Events\UpcomingShowsWereRetrieved' => [
             'App\Listeners\SendPushNotificationToUpdateTheDatabase',

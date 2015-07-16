@@ -24,7 +24,8 @@ class NotificationController extends Controller
         $validator = Validator::make($request->all(), [
             'gcm_id'   => 'required|exists:users,gcm_id',
             'movie_id' => 'required|exists:movies,id',
-            'date'     => 'required|date|after:today'
+            'date'     => 'required|date|after:today',
+            'no_of_seats' => 'number',
         ]);
 
         if ($validator->fails()) {
@@ -32,7 +33,7 @@ class NotificationController extends Controller
         }
 
         $user = User::whereGcmId($request->get('gcm_id'))->firstOrFail();
-        $movie = Movie::find($request->get("movie_id"));
+        $movie = Movie::findOrFail($request->get("movie_id"));
         $date = Carbon::createFromFormat("Y-m-d", $request->get('date'))->toDateString();
 
         if(!$movie->showtimes()->where('date',$date)->count()){
@@ -40,6 +41,9 @@ class NotificationController extends Controller
                 'movie_id' => $movie->id,
                 'date'     => Carbon::createFromFormat("Y-m-d", $date)->toDateTimeString(),
                 'sent'     => false,
+                'no_of_seats' => $request->get('no_of_seats'),
+                'after_time' => $request->get('after_time'),
+                'before_time' => $request->get('before_time'),
             ]);
         }
 
