@@ -2,8 +2,6 @@
 
 namespace App;
 
-use Config;
-
 class GCM
 {
 
@@ -19,7 +17,7 @@ class GCM
      */
     public function __construct()
     {
-        $this->serverApiKey = Config::get('gcm.key');
+        $this->serverApiKey = config('gcm.key');
     }
 
 

@@ -28,7 +28,7 @@ class SendPushNotificationAboutShowtime
      */
     public function handle(ShowTimesWereRetrieved $event)
     {
-        $pending_notifications = Notification::unsent()->with([ 'movie', 'movie.cinema' ])->get();
+        $pending_notifications = Notification::unsent()->with([ 'movie', 'user', 'movie.cinema' ])->get();
         foreach ($pending_notifications as $notification) {
             if ($notification->hasShowTime()) {
                 $deviceToken = $notification->user->gcm_id;

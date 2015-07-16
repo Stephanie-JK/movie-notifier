@@ -19,6 +19,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\UpcomingShowsWereRetrieved' => [
             'App\Listeners\SendPushNotificationToUpdateTheDatabase',
         ],
+        'App\Events\NotificationWasDeleted' => [
+            'App\Listeners\SendPushNotificationForDeletion',
+        ],
     ];
 
     /**

@@ -66,7 +66,9 @@ class ShowsRetriever extends Command implements SelfHandling
                 } else {
                     $movieModel = $provider->model()->movies()->firstOrCreate(array_except($movie, [ 'showtime' ]));
                 }
-                $movieModel->showtimes()->firstOrCreate($movie['showtime']);
+                $showtimes = $movieModel->showtimes()->firstOrCreate($movie['showtime']);
+                $showtimes->touch();
+                $movieModel->touch();
             }
         }
         event(new ShowTimesWereRetrieved());

@@ -3,11 +3,24 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CinemaHall extends Model
 {
 
+    use SoftDeletes;
+
     protected $fillable = [ 'name', 'logo', 'url' ];
+
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleted(function ($cinema) {
+            $cinema->movies()->delete();
+        });
+    }
 
 
     public function movies()
