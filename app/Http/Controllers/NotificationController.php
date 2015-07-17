@@ -37,15 +37,18 @@ class NotificationController extends Controller
         $user = User::whereGcmId($request->get('gcm_id'))->firstOrFail();
         $movie = Movie::findOrFail($request->get("movie_id"));
         $date = Carbon::createFromFormat("Y-m-d", $request->get('date'))->toDateString();
+        $numberOfSeats = $request->get('no_of_seats', 0);
+        $afterTime = $numberOfSeats ? $request->get('after_time') : null;
+        $beforeTime = $numberOfSeats ? $request->get('before_time') : null;
 
         if(!$movie->showtimes()->where('date',$date)->count()){
             $user->notifications()->firstOrCreate([
                 'movie_id' => $movie->id,
                 'date'     => Carbon::createFromFormat("Y-m-d", $date)->toDateTimeString(),
                 'sent'     => false,
-                'no_of_seats' => $request->get('no_of_seats', 0),
-                'after_time' => $request->get('after_time'),
-                'before_time' => $request->get('before_time'),
+                'no_of_seats' => $numberOfSeats,
+                'after_time' => $afterTime,
+                'before_time' => $beforeTime,
             ]);
         }
 
