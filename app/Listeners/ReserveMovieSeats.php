@@ -39,7 +39,7 @@ class ReserveMovieSeats
                     $before_time = Carbon::createFromFormat('g:i A', $notification->before_time);
                     if($time->gte($after_time) && !$time->gt($before_time))
                     {
-                        if($notification->movie->cinema == 1)
+                        if($notification->movie->cinema->id == 1)
                         {
                             Qfx::book($pending->showId, $notification->no_of_seats);
                         }
