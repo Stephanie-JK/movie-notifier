@@ -1,6 +1,6 @@
 <?php
 get('/', function () {
-    return redirect("http://nikhil.com.np");
+    return '';
 });
 
 $router->group([ 'prefix' => 'api' ], function () use ($router) {

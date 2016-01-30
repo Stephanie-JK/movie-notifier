@@ -28,12 +28,12 @@ class CinemaController extends Controller
 
         $halls = CinemaHall::with([ 'movies', 'movies.showtimes' ])->get();
         $data  = [ ];
-        foreach ($halls as $k => $hall) {
+        foreach ($halls as $hall) {
             $h = [
                 'id'   => $hall->id,
                 'name' => $hall->name,
             ];
-            foreach ($hall->movies as $k1 => $movie) {
+            foreach ($hall->movies as $movie) {
                 $m = [
                     'id'           => $movie->id,
                     'name'         => $movie->name,

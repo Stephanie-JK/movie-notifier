@@ -47,7 +47,6 @@ class FCubeProvider extends BaseProvider
         $response = $this->client->get("{$this->domain}/Home/CurrentShowDate");
         if ($response->getStatusCode() == 200) {
             $data = json_decode($response->getBody(), true);
-
             return array_pluck($data, 'Value');
         }
 

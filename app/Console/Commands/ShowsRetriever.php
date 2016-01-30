@@ -88,10 +88,10 @@ class ShowsRetriever extends Command implements SelfHandling
         if ($movieModel->count()) {
             $movieModel = $movieModel->first();
             return $movieModel;
-        } else {
-            $movieModel = $provider->model()->movies()->firstOrCreate(array_except($movie, 'showtime'));
-            return $movieModel;
         }
+
+        $movieModel = $provider->model()->movies()->firstOrCreate(array_except($movie, 'showtime'));
+        return $movieModel;
     }
 
 
