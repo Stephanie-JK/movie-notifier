@@ -17,9 +17,9 @@ Just dive into the code to learn more.
 
 This program was written for personal use while i had just started learning Laravel so there might a lot of bad code.
 
-## Maintainence
+## Contribution
 
-This repository is no longer maintained. If you want to contribute by improving the functionality, writing tests or refactoring existing code please fork the repository make changes and submit a pull request.
+If you want to contribute by improving the functionality, writing tests or refactoring existing code, creating better documentation please fork the repository make changes and submit a pull request.
 
 # License
 
