@@ -11,7 +11,6 @@ use Illuminate\Contracts\Bus\SelfHandling;
 
 class ShowsRetriever extends Command implements SelfHandling
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -36,17 +35,14 @@ class ShowsRetriever extends Command implements SelfHandling
      */
     private $client;
 
-
     /**
      * Create a new command instance.
-     *
      */
     public function __construct()
     {
         parent::__construct();
         $this->client = new Client();
     }
-
 
     /**
      * Execute the command.
@@ -61,7 +57,6 @@ class ShowsRetriever extends Command implements SelfHandling
         event(new ShowTimesWereRetrieved());
     }
 
-
     /**
      * @param $provider
      */
@@ -75,7 +70,6 @@ class ShowsRetriever extends Command implements SelfHandling
         }
     }
 
-
     /**
      * @param $provider
      * @param $movie
@@ -87,13 +81,14 @@ class ShowsRetriever extends Command implements SelfHandling
         $movieModel = $provider->model()->movies()->whereName($movie['name']);
         if ($movieModel->count()) {
             $movieModel = $movieModel->first();
+
             return $movieModel;
         }
 
         $movieModel = $provider->model()->movies()->firstOrCreate(array_except($movie, 'showtime'));
+
         return $movieModel;
     }
-
 
     /**
      * Adds Showtime to the provided movie.
@@ -109,7 +104,6 @@ class ShowsRetriever extends Command implements SelfHandling
         }
         $showtimeModele->touch();
     }
-
 
     /**
      * Adds time slots to the provided showtime.

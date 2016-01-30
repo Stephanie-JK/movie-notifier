@@ -1,4 +1,6 @@
-<?php namespace App\Crawler\FCube;
+<?php
+
+namespace App\Crawler\FCube;
 
 use App\CinemaHall;
 use App\Crawler\BaseProvider;
@@ -6,12 +8,10 @@ use Carbon\Carbon;
 
 class FCubeProvider extends BaseProvider
 {
-
-    protected $domain = "http://www.fcubecinemas.com";
-
+    protected $domain = 'http://www.fcubecinemas.com';
 
     /**
-     * Returns the Provider Model
+     * Returns the Provider Model.
      *
      * @return mixed
      */
@@ -20,14 +20,13 @@ class FCubeProvider extends BaseProvider
         return CinemaHall::find(2);
     }
 
-
     /**
-     * Gets the released movies
+     * Gets the released movies.
      * @return array
      */
     public function released()
     {
-        $movies = [ ];
+        $movies = [];
 
         $showtimes = $this->showtimes();
         foreach ($showtimes as $showtime) {
@@ -37,9 +36,8 @@ class FCubeProvider extends BaseProvider
         return $movies;
     }
 
-
     /**
-     * Gets the show times
+     * Gets the show times.
      * @return array
      */
     private function showtimes()
@@ -47,15 +45,15 @@ class FCubeProvider extends BaseProvider
         $response = $this->client->get("{$this->domain}/Home/CurrentShowDate");
         if ($response->getStatusCode() == 200) {
             $data = json_decode($response->getBody(), true);
+
             return array_pluck($data, 'Value');
         }
 
-        return [ ];
+        return [];
     }
 
-
     /**
-     * Gets the movie for given show time
+     * Gets the movie for given show time.
      *
      * @param $showtime
      *
@@ -63,8 +61,8 @@ class FCubeProvider extends BaseProvider
      */
     private function moviesOn($showtime)
     {
-        $movies = [ ];
-        $url    = "{$this->domain}/Home/ShowList?id=-1&d=" . urlencode($showtime) . "&s=-2";
+        $movies = [];
+        $url = "{$this->domain}/Home/ShowList?id=-1&d=".urlencode($showtime).'&s=-2';
 
         $response = $this->client->get($url);
         if ($response->getStatusCode() == 200) {
@@ -72,10 +70,10 @@ class FCubeProvider extends BaseProvider
             foreach ($dom->find('li') as $element) {
                 $movies[] = [
                     'name'     => $this->sanitize($element->find('a', 0)->plaintext),
-                    'image'    => $this->domain . $element->find('img', 0)->src,
+                    'image'    => $this->domain.$element->find('img', 0)->src,
                     //'release_date' => Carbon::parse("- 7 days")->format("Y-m-d"),
                     'showtime' => [
-                        'date' => Carbon::createFromFormat("m/d/Y", $showtime)->format("Y-m-d")
+                        'date' => Carbon::createFromFormat('m/d/Y', $showtime)->format('Y-m-d'),
                     ],
                 ];
             }
@@ -84,9 +82,8 @@ class FCubeProvider extends BaseProvider
         return $movies;
     }
 
-
     /**
-     * Gets the upcoming show movies
+     * Gets the upcoming show movies.
      *
      * @return array
      */
@@ -103,14 +100,13 @@ class FCubeProvider extends BaseProvider
             foreach ($dom->find('div.span6') as $element) {
                 $movies[] = [
                     'name'         => $this->sanitize($element->find('h2', 0)->plaintext),
-                    'image'        => $this->domain . $element->find('img', 0)->src,
-                    'release_date' => Carbon::createFromFormat("d M Y",
-                        $element->find('small', 1)->plaintext)->format("Y-m-d")
+                    'image'        => $this->domain.$element->find('img', 0)->src,
+                    'release_date' => Carbon::createFromFormat('d M Y',
+                        $element->find('small', 1)->plaintext)->format('Y-m-d'),
                 ];
             }
         }
 
         return $movies;
     }
-
 }

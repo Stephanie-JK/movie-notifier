@@ -16,7 +16,6 @@ class NotificationWasDeleted extends Event
      */
     public $notification;
 
-
     /**
      * Create a new event instance.
      *

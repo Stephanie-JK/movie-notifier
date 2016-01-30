@@ -7,7 +7,6 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-
     /**
      * The Artisan commands provided by your application.
      *
@@ -18,7 +17,6 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\UpcomingShowsRetriever::class,
         \App\Console\Commands\OldShowsRemover::class,
     ];
-
 
     /**
      * Define the application's command schedule.

@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
-
     use Authenticatable, CanResetPassword, SoftDeletes;
 
     /**
@@ -26,14 +25,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @var array
      */
-    protected $fillable = [ 'name', 'email', 'gcm_id' ];
+    protected $fillable = ['name', 'email', 'gcm_id'];
 
     /**
      * The attributes excluded from the model's JSON form.
      *
      * @var array
      */
-    protected $hidden = [ 'password', 'remember_token' ];
+    protected $hidden = ['password', 'remember_token'];
 
     public static function boot()
     {

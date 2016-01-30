@@ -7,11 +7,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CinemaHall extends Model
 {
-
     use SoftDeletes;
 
-    protected $fillable = [ 'name', 'logo', 'url' ];
-
+    protected $fillable = ['name', 'logo', 'url'];
 
     public static function boot()
     {
@@ -22,18 +20,15 @@ class CinemaHall extends Model
         });
     }
 
-
     public function movies()
     {
         return $this->hasMany(Movie::class);
     }
 
-
     public function showtimes()
     {
         return $this->hasManyThrough(Showtime::class, Movie::class);
     }
-
 
     public function notifications()
     {

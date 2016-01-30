@@ -7,13 +7,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Showtime extends Model
 {
-
     use SoftDeletes;
 
-    protected $fillable = [ 'date' ];
+    protected $fillable = ['date'];
 
-    protected $dates = [ 'date' ];
-
+    protected $dates = ['date'];
 
     public static function boot()
     {
@@ -24,12 +22,10 @@ class Showtime extends Model
         });
     }
 
-
     public function movie()
     {
         return $this->belongsTo(Movie::class);
     }
-
 
     public function timeslots()
     {

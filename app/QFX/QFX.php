@@ -8,7 +8,6 @@ use Yangqi\Htmldom\Htmldom;
 
 class Qfx
 {
-
     protected $seatPreferences = [
         'QFX Kumari 1'     => [
             'row'             => 'G',
@@ -39,28 +38,25 @@ class Qfx
             'row'             => 'G',
             'alternative_row' => 'F',
             'middle'          => 9,
-        ]
+        ],
     ];
 
-    protected $seats = [ ], $showId, $transactionId, $seatsToBook = [ ], $cinema;
-
+    protected $seats = [], $showId, $transactionId, $seatsToBook = [], $cinema;
 
     public function __construct()
     {
-        $this->client = new Client([ 'cookies' => true, 'base_uri' => 'http://qfxcinemas.com', ]);
-        $this->dom    = new Htmldom();
+        $this->client = new Client(['cookies' => true, 'base_uri' => 'http://qfxcinemas.com']);
+        $this->dom = new Htmldom();
     }
-
 
     public static function book($showId, $seats)
     {
-        $qfx              = new self;
-        $qfx->showId      = $showId;
+        $qfx = new self;
+        $qfx->showId = $showId;
         $qfx->seatsToBook = $seats;
 
-        return ( $qfx->login() && $qfx->getSeats() && $qfx->addSeats() && $qfx->confirmSeats() );
+        return ($qfx->login() && $qfx->getSeats() && $qfx->addSeats() && $qfx->confirmSeats());
     }
-
 
     public function login()
     {
@@ -68,23 +64,22 @@ class Qfx
             'form_params'     => [
                 'Username'   => env('qfx_username'),
                 'Password'   => env('qfx_password'),
-                'RememberMe' => 'false'
+                'RememberMe' => 'false',
             ],
-            'allow_redirects' => false
+            'allow_redirects' => false,
         ]);
 
-        return ( $response->getStatusCode() == 302 );
+        return ($response->getStatusCode() == 302);
     }
-
 
     private function getSeats()
     {
-        $response = $this->client->get('/ShoppingCart?ShowID=' . $this->showId);
+        $response = $this->client->get('/ShoppingCart?ShowID='.$this->showId);
         if ($response->getStatusCode() == 200) {
             $dom = $this->dom->load($response->getBody());
             if ($dom->find('input#TransactionID')) {
                 $this->transactionId = $dom->find('input#TransactionID', 0)->value;
-                $this->cinema        = $dom->find('td', 0)->plaintext;
+                $this->cinema = $dom->find('td', 0)->plaintext;
                 $this->parseSeats($dom->find('div#mainContInternal', 0));
 
                 return true;
@@ -94,31 +89,28 @@ class Qfx
         return false;
     }
 
-
     private function parseSeats($container)
     {
         foreach ($container->find('div.seatRows') as $seatRow) {
-            if ( ! $seatRow->find('div.seatMark')) {
+            if (!$seatRow->find('div.seatMark')) {
                 continue;
             }
             $mark = $seatRow->find('div.seatMark', 0)->plaintext;
             foreach ($seatRow->find('div.seatRow', 0)->find('div.normalSeat') as $seat) {
-                $this->seats[$this->newSeatKey($mark . $seat->plaintext)] = $seat->{'data-seat-id'};
+                $this->seats[$this->newSeatKey($mark.$seat->plaintext)] = $seat->{'data-seat-id'};
             }
         }
     }
 
-
     private function newSeatKey($string, $count = 0)
     {
-        $keyName = $count ? $string . "_" . $count : $string;
-        if ( ! array_key_exists($keyName, $this->seats)) {
+        $keyName = $count ? $string.'_'.$count : $string;
+        if (!array_key_exists($keyName, $this->seats)) {
             return $keyName;
         }
 
         return $this->newSeatKey($string, $count + 1);
     }
-
 
     private function addSeats()
     {
@@ -126,7 +118,7 @@ class Qfx
 
         $seats = $this->seats();
 
-        if ( ! count($seats)) {
+        if (!count($seats)) {
             return false;
         }
 
@@ -135,19 +127,18 @@ class Qfx
                 'json' => [
                     'SeatID'         => $this->seats[$seat],
                     'ShoppingCartID' => $this->transactionId,
-                    'ShowID'         => $this->showId
-                ]
+                    'ShowID'         => $this->showId,
+                ],
             ]);
         }
 
         return true;
     }
 
-
     private function removeAnyPreviousSeats()
     {
         $response = $this->client->get("/ShoppingCart/GetSeatStatusWithShowDetail?TransactionID={$this->transactionId}&ShowID={$this->showId}");
-        $data     = json_decode($response->getBody());
+        $data = json_decode($response->getBody());
         if ($data[1]->Value) {
             $this->cancelTransaction();
             $this->getSeats();
@@ -162,27 +153,25 @@ class Qfx
         }
     }
 
-
     private function cancelTransaction()
     {
-        $this->client->get('/Payment/CancelExistingTransaction?transactionID=' . $this->transactionId);
+        $this->client->get('/Payment/CancelExistingTransaction?transactionID='.$this->transactionId);
     }
-
 
     public function seats()
     {
         $settings = $this->seatPreferences[$this->cinema];
-        $number   = $this->seatsToBook;
-        $prefix   = $settings['row'];
-        $middle   = $settings['middle'];
+        $number = $this->seatsToBook;
+        $prefix = $settings['row'];
+        $middle = $settings['middle'];
 
-        $seats    = [ $prefix . $middle ];
+        $seats = [$prefix.$middle];
         $division = $number / 2;
 
         for ($i = 1; $i <= $division; $i++) {
-            $seats[] = $prefix . ( $middle + $i );
+            $seats[] = $prefix.($middle + $i);
             if ($number % 2 != 0 || $i !== $division) {
-                $seats[] = $prefix . ( $middle - $i );
+                $seats[] = $prefix.($middle - $i);
             }
         }
 
@@ -193,23 +182,21 @@ class Qfx
         }));
     }
 
-
     private function removeIrrelevantSeats($seats)
     {
         $existingSeats = $this->seats;
 
         return array_filter($seats, function ($seat) use ($existingSeats) {
-            return ( array_key_exists($seat, $this->seats) === true );
+            return (array_key_exists($seat, $this->seats) === true);
         });
     }
 
-
     private function confirmSeats()
     {
-        $response = $this->client->post("/ShoppingCart/Payment", [
+        $response = $this->client->post('/ShoppingCart/Payment', [
             'form_params' => [
                 'transactionID' => $this->transactionId,
-            ]
+            ],
         ]);
 
         $dom = $this->dom->load($response->getBody());

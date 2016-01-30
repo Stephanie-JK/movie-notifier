@@ -6,9 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TimeSlot extends Model
 {
-
-    protected $fillable = [ 'showtime_id', 'time', 'showId', 'location' ];
-
+    protected $fillable = ['showtime_id', 'time', 'showId', 'location'];
 
     public function showtime()
     {
@@ -17,6 +15,6 @@ class TimeSlot extends Model
 
     public function reservations()
     {
-        $this->belongsToMany(TimeSlot::class, 'notification_timeslot');
+        $this->belongsToMany(self::class, 'notification_timeslot');
     }
 }

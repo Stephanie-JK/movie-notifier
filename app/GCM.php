@@ -4,22 +4,19 @@ namespace App;
 
 class GCM
 {
+    public $url = 'https://android.googleapis.com/gcm/send';
 
-    var $url = 'https://android.googleapis.com/gcm/send';
+    public $serverApiKey = '';
 
-    var $serverApiKey = "";
-
-    var $devices = array();
-
+    public $devices = [];
 
     /**
-     *  The constructor
+     *  The constructor.
      */
     public function __construct()
     {
         $this->serverApiKey = config('gcm.key');
     }
-
 
     public static function to($devices)
     {
@@ -29,47 +26,42 @@ class GCM
         return $obj;
     }
 
-
     /**
-     * Set the devices to send
+     * Set the devices to send.
      *
      * @param $deviceIds
      */
     public function setDevices($deviceIds)
     {
-
         if (is_array($deviceIds)) {
             $this->devices = $deviceIds;
         } else {
-            $this->devices = array( $deviceIds );
+            $this->devices = [$deviceIds];
         }
-
     }
 
-
     /**
-     * Send the message to the device
+     * Send the message to the device.
      *
      * @param       $message
      * @param array $data Array of data to accompany the message
      *
      * @return mixed
      */
-    public function send($message, $data = [ ])
+    public function send($message, $data = [])
     {
-
-        if ( ! is_array($this->devices) || count($this->devices) == 0) {
-            $this->error("No devices set");
+        if (!is_array($this->devices) || count($this->devices) == 0) {
+            $this->error('No devices set');
         }
 
         if (strlen($this->serverApiKey) < 8) {
-            $this->error("Server API Key not set");
+            $this->error('Server API Key not set');
         }
 
-        $fields = array(
+        $fields = [
             'registration_ids' => $this->devices,
-            'data'             => array( "message" => $message ),
-        );
+            'data'             => ['message' => $message],
+        ];
 
         if (count($data)) {
             foreach ($data as $key => $value) {
@@ -77,10 +69,10 @@ class GCM
             }
         }
 
-        $headers = array(
-            'Authorization: key=' . $this->serverApiKey,
-            'Content-Type: application/json'
-        );
+        $headers = [
+            'Authorization: key='.$this->serverApiKey,
+            'Content-Type: application/json',
+        ];
 
         // Open connection
         $ch = curl_init();
@@ -107,11 +99,10 @@ class GCM
         return $result;
     }
 
-
-    function error($msg)
+    public function error($msg)
     {
-        echo "Android send notification failed with error:";
-        echo "\t" . $msg;
-        exit( 1 );
+        echo 'Android send notification failed with error:';
+        echo "\t".$msg;
+        exit(1);
     }
 }

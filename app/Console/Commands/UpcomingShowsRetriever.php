@@ -10,7 +10,6 @@ use Illuminate\Contracts\Bus\SelfHandling;
 
 class UpcomingShowsRetriever extends Command implements SelfHandling
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -19,7 +18,7 @@ class UpcomingShowsRetriever extends Command implements SelfHandling
     protected $signature = 'movie:upcoming';
 
     protected $providers = [
-        QFXProvider::class
+        QFXProvider::class,
     ];
 
     /**
@@ -34,17 +33,14 @@ class UpcomingShowsRetriever extends Command implements SelfHandling
      */
     private $client;
 
-
     /**
      * Create a new command instance.
-     *
      */
     public function __construct()
     {
         parent::__construct();
         $this->client = new Client();
     }
-
 
     /**
      * Execute the command.
@@ -61,7 +57,7 @@ class UpcomingShowsRetriever extends Command implements SelfHandling
                 $movieModel = $provider->model()->movies()->whereName($movie['name']);
                 if (!$movieModel->count()) {
                     $provider->model()->movies()->create($movie);
-                }else{
+                } else {
                     $movieModel->first()->update($movie);
                 }
             }

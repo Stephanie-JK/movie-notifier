@@ -1,4 +1,6 @@
-<?php namespace App\Crawler\QFX;
+<?php
+
+namespace App\Crawler\QFX;
 
 use App\CinemaHall;
 use App\Crawler\BaseProvider;
@@ -6,12 +8,10 @@ use Carbon\Carbon;
 
 class QFXProvider extends BaseProvider
 {
-
-    protected $domain = "http://www.qfxcinemas.com";
-
+    protected $domain = 'http://www.qfxcinemas.com';
 
     /**
-     * Returns the Provider Model
+     * Returns the Provider Model.
      *
      * @return mixed
      */
@@ -20,14 +20,13 @@ class QFXProvider extends BaseProvider
         return CinemaHall::find(1);
     }
 
-
     /**
-     * Gets the released movies
+     * Gets the released movies.
      * @return array
      */
     public function released()
     {
-        $movies = [ ];
+        $movies = [];
 
         $showtimes = $this->showtimes();
         foreach ($showtimes as $showtime) {
@@ -37,9 +36,8 @@ class QFXProvider extends BaseProvider
         return $movies;
     }
 
-
     /**
-     * Gets the show times
+     * Gets the show times.
      * @return array
      */
     private function showtimes()
@@ -51,12 +49,11 @@ class QFXProvider extends BaseProvider
             return array_pluck($data, 'Value');
         }
 
-        return [ ];
+        return [];
     }
 
-
     /**
-     * Gets the movie for given show time
+     * Gets the movie for given show time.
      *
      * @param $showtime
      *
@@ -64,8 +61,8 @@ class QFXProvider extends BaseProvider
      */
     private function moviesOn($showtime)
     {
-        $movies = [ ];
-        $url    = "{$this->domain}/Home/NowShowingList?TheatreID=0&SelectedDate=" . urlencode($showtime) . "&ScreenType=0";
+        $movies = [];
+        $url = "{$this->domain}/Home/NowShowingList?TheatreID=0&SelectedDate=".urlencode($showtime).'&ScreenType=0';
 
         $response = $this->client->get($url);
         if ($response->getStatusCode() == 200) {
@@ -74,11 +71,11 @@ class QFXProvider extends BaseProvider
             foreach ($dom->find('li[!class]') as $element) {
                 $movies[] = [
                     'name'     => $this->sanitize($element->find('a', 0)->plaintext),
-                    'image'    => $this->domain . $element->find('img', 0)->src,
+                    'image'    => $this->domain.$element->find('img', 0)->src,
                     //'release_date' => Carbon::parse("- 7 days")->format("Y-m-d"),
                     'showtime' => [
-                        'date'      => Carbon::createFromFormat("m/d/Y", $showtime)->format("Y-m-d"),
-                        'timeslots' => $this->parseTimeSlots($element->find('div.alphaDetail', 0))
+                        'date'      => Carbon::createFromFormat('m/d/Y', $showtime)->format('Y-m-d'),
+                        'timeslots' => $this->parseTimeSlots($element->find('div.alphaDetail', 0)),
                     ],
                 ];
             }
@@ -87,11 +84,10 @@ class QFXProvider extends BaseProvider
         return $movies;
     }
 
-
     private function parseTimeSlots($div)
     {
-        $locations = [ ];
-        $slots     = [ ];
+        $locations = [];
+        $slots = [];
 
         foreach ($div->find('span.hallName') as $location) {
             $locations[] = $location->plaintext;
@@ -111,16 +107,15 @@ class QFXProvider extends BaseProvider
         return $slots;
     }
 
-
     /**
-     * Gets the upcoming show movies
+     * Gets the upcoming show movies.
      *
      * @return array
      */
     public function upcoming()
     {
-        $movies = [ ];
-        $url    = "{$this->domain}/NextChange";
+        $movies = [];
+        $url = "{$this->domain}/NextChange";
 
         $response = $this->client->get($url);
         if ($response->getStatusCode() == 200) {
@@ -131,14 +126,13 @@ class QFXProvider extends BaseProvider
             foreach ($dom->find('div.span6') as $element) {
                 $movies[] = [
                     'name'         => $this->sanitize($element->find('h2', 0)->plaintext),
-                    'image'        => $this->domain . $element->find('img', 0)->src,
-                    'release_date' => Carbon::createFromFormat("d M Y",
-                        $element->find('small', 1)->plaintext)->format("Y-m-d")
+                    'image'        => $this->domain.$element->find('img', 0)->src,
+                    'release_date' => Carbon::createFromFormat('d M Y',
+                        $element->find('small', 1)->plaintext)->format('Y-m-d'),
                 ];
             }
         }
 
         return $movies;
     }
-
 }

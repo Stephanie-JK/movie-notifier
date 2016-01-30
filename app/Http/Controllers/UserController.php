@@ -8,15 +8,13 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-
     public function __construct()
     {
-        $this->middleware('guest', [ 'only' => 'create' ]);
+        $this->middleware('guest', ['only' => 'create']);
     }
 
-
     /**
-     *  Create a new User
+     *  Create a new User.
      *
      * @param Request $request
      *
@@ -26,16 +24,15 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'gcm_id' => 'required|unique:users',
-            'email'  => 'email'
+            'email'  => 'email',
         ]);
 
         if ($validator->fails()) {
-            return [ 'errors' => $validator->errors()->all(), 'status' => 'failed'];
+            return ['errors' => $validator->errors()->all(), 'status' => 'failed'];
         }
 
         $user = User::create($request->all());
 
-        return [ 'status' => 'pass' ];
+        return ['status' => 'pass'];
     }
-
 }

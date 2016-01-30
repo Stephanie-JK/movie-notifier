@@ -10,9 +10,8 @@ use Illuminate\Support\Facades\Validator;
 
 class NotificationController extends Controller
 {
-
     /**
-     * Stores a new notification for the user
+     * Stores a new notification for the user.
      *
      * @param Request $request
      *
@@ -20,7 +19,6 @@ class NotificationController extends Controller
      */
     public function create(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'gcm_id'   => 'required|exists:users,gcm_id',
             'movie_id' => 'required|exists:movies,id',
@@ -31,20 +29,20 @@ class NotificationController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return [ 'errors' => $validator->errors()->all(), 'status' => 'failed' ];
+            return ['errors' => $validator->errors()->all(), 'status' => 'failed'];
         }
 
         $user = User::whereGcmId($request->get('gcm_id'))->firstOrFail();
-        $movie = Movie::findOrFail($request->get("movie_id"));
-        $date = Carbon::createFromFormat("Y-m-d", $request->get('date'))->toDateString();
+        $movie = Movie::findOrFail($request->get('movie_id'));
+        $date = Carbon::createFromFormat('Y-m-d', $request->get('date'))->toDateString();
         $numberOfSeats = $request->get('no_of_seats', 0);
         $afterTime = $numberOfSeats ? $request->get('after_time') : null;
         $beforeTime = $numberOfSeats ? $request->get('before_time') : null;
 
-        if(!$movie->showtimes()->where('date',$date)->count()){
+        if (!$movie->showtimes()->where('date', $date)->count()) {
             $user->notifications()->firstOrCreate([
                 'movie_id' => $movie->id,
-                'date'     => Carbon::createFromFormat("Y-m-d", $date)->toDateTimeString(),
+                'date'     => Carbon::createFromFormat('Y-m-d', $date)->toDateTimeString(),
                 'sent'     => false,
                 'no_of_seats' => $numberOfSeats,
                 'after_time' => $afterTime,
@@ -52,22 +50,22 @@ class NotificationController extends Controller
             ]);
         }
 
-        return [ 'status' => 'success' ];
+        return ['status' => 'success'];
     }
 
     public function destroy(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'gcm_id'   => 'required|exists:users,gcm_id',
-            'notification_id' => 'required|exists:notifications,id'
+            'notification_id' => 'required|exists:notifications,id',
         ]);
 
         if ($validator->fails()) {
-            return [ 'errors' => $validator->errors()->all(), 'status' => 'failed' ];
+            return ['errors' => $validator->errors()->all(), 'status' => 'failed'];
         }
 
-        User::whereGcmId($request->get('gcm_id'))->first()->notifications()->findOrFail($request->get("notification_id"))->delete();
+        User::whereGcmId($request->get('gcm_id'))->first()->notifications()->findOrFail($request->get('notification_id'))->delete();
 
-        return [ 'status' => 'success' ];
+        return ['status' => 'success'];
     }
 }

@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Validator;
 
 class CinemaController extends Controller
 {
-
     /**
      * @param Request $request
      *
@@ -17,17 +16,16 @@ class CinemaController extends Controller
      */
     public function all(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
-            'gcm_id' => 'required|exists:users,gcm_id'
+            'gcm_id' => 'required|exists:users,gcm_id',
         ]);
 
         if ($validator->fails()) {
             abort(401);
         }
 
-        $halls = CinemaHall::with([ 'movies', 'movies.showtimes' ])->get();
-        $data  = [ ];
+        $halls = CinemaHall::with(['movies', 'movies.showtimes'])->get();
+        $data = [];
         foreach ($halls as $hall) {
             $h = [
                 'id'   => $hall->id,
@@ -37,13 +35,13 @@ class CinemaController extends Controller
                 $m = [
                     'id'           => $movie->id,
                     'name'         => $movie->name,
-                    'release_date' => $movie->release_date->format("Y-m-d")
+                    'release_date' => $movie->release_date->format('Y-m-d'),
                 ];
 
                 foreach ($movie->showtimes as $showtime) {
                     $m['showtimes'][] = [
                         'id'   => $showtime->id,
-                        'date' => $showtime->date->format("Y-m-d")
+                        'date' => $showtime->date->format('Y-m-d'),
                     ];
                 }
                 $h['movies'][] = $m;
@@ -52,18 +50,17 @@ class CinemaController extends Controller
         }
 
         $rem = [];
-        $reminders = User::whereGcmId($request->get('gcm_id'))->firstOrFail()->notifications()->with(['movie','movie.cinema'])->unsent()->recent()->get();
-        foreach($reminders as $reminder)
-        {
+        $reminders = User::whereGcmId($request->get('gcm_id'))->firstOrFail()->notifications()->with(['movie', 'movie.cinema'])->unsent()->recent()->get();
+        foreach ($reminders as $reminder) {
             $rem[] = [
                 'id' => $reminder->id,
                 'name' => $reminder->movie->name,
                 'cinema_name' => $reminder->movie->cinema->name,
                 'date' => $reminder->date->format('Y-m-d'),
-                'image' => $reminder->movie->image
+                'image' => $reminder->movie->image,
             ];
         }
 
-        return [ 'status' => 'success', 'data' => $data ,'reminders' => $rem];
+        return ['status' => 'success', 'data' => $data ,'reminders' => $rem];
     }
 }
