@@ -6,8 +6,12 @@ Also provides the functionality to reserve the seats as soon as showtimes are av
 This application was built to be used with android application which has not been published, you can fork it and use it as a web application or for mobile phones.
 
 ## Installation
+1. Clone the repository
+2. Update the configurations
+3. Set a cron job for the commands
+4. Hack the code to work as you wish
 
-No specific instructions. Just dive into the code to learn.
+Just dive into the code to learn more.
 
 ## Warning
 
