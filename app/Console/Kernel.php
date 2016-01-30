@@ -14,7 +14,6 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        \App\Console\Commands\Inspire::class,
         \App\Console\Commands\ShowsRetriever::class,
         \App\Console\Commands\UpcomingShowsRetriever::class,
         \App\Console\Commands\OldShowsRemover::class,
